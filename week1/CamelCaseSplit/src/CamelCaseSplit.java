@@ -1,8 +1,70 @@
+import java.util.ArrayList;
+import java.util.List;
 
 public class CamelCaseSplit {
-
+	private List<String> lista_palabras;
+	
 	public CamelCaseSplit() {
-		// TODO Auto-generated constructor stub
+		lista_palabras = new ArrayList<String>();
+	}
+
+	public List<String> converterCamelCase(String string) {
+		int last_position = string.length();
+		
+		if( Character.isDigit(string.charAt(0)) ) {
+			throw new NaoDebeComenzarPorNumeroException("Nao debe Comenzar por numero");
+		}
+		for(int position=(string.length()-1); position>=0; position--) {
+			if( this.isStartOfWord(string, position) || position == 0 ){
+				lista_palabras.add(this.splitUntil(string, position, last_position));
+				last_position = position;
+			}
+		}
+		return lista_palabras;
+	}
+	
+	private boolean isStartOfWord(String string, int position) {
+		boolean result=false;
+		char c = string.charAt(position);
+		char c_before, c_last;
+		
+		if(position > 0 & position < string.length()-1) {
+			c_before = string.charAt(position-1);
+			c_last = string.charAt(position+1);
+		}
+		else {
+			c_before = 0;
+			c_last = 0;
+		}
+		
+		if( isUpperCase(c_before) && isUpperCase(c) && !isUpperCase(c_last)){
+			result = true;
+		}
+		else if( !isUpperCase(c_before) && isUpperCase(c) && isUpperCase(c_last)){
+			result = true;
+		}
+		else if( !isUpperCase(c_before) && isUpperCase(c) && !isUpperCase(c_last)){
+			result = true;
+		}
+		return result;
+	}
+	
+	private boolean isUpperCase(char c){
+		String string = Character.toString(c);
+		return(string == string.toUpperCase());
+	}
+
+	private String splitUntil(String string, int position, int last_position) {
+		String stringSplit;
+		char c = string.charAt(position);
+		char last_c = string.charAt(last_position-1);
+		if(isUpperCase(c) && isUpperCase(last_c)) {
+			stringSplit = string.substring(position, last_position);
+		}
+		else {
+			stringSplit = string.substring(position, last_position).toLowerCase();
+		}
+		return stringSplit;
 	}
 
 }
